@@ -1,8 +1,7 @@
-[
-  {
+{
+  "io.nomie.3.streak": {
     "name": "Streaks by Brandon",
     "description": "See a streak view by day",
     "url": "https://docs.nomie.io/test.html"
   }
-]
-
+}
