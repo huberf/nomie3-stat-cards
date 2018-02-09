@@ -1,0 +1,48 @@
+{
+  "events": [
+    { "start": "2018-02-08T21:14:11.000Z", "end": "2018-02-08T21:14:11.000Z", "value": 8.3, "geo": null, "score": 0 },
+    { "start": "2018-02-08T17:38:39.000Z", "end": "2018-02-08T17:38:39.000Z", "value": 5.1, "geo": null, "score": 0 },
+    { "start": "2018-02-08T17:38:20.000Z", "end": "2018-02-08T17:38:20.000Z", "value": 7.3, "geo": null, "score": 0 },
+    { "start": "2018-02-08T17:36:27.000Z", "end": "2018-02-08T17:36:27.000Z", "value": 8.1, "geo": null, "score": 0 },
+    { "start": "2018-02-08T17:34:04.000Z", "end": "2018-02-08T17:34:04.000Z", "value": 7.2, "geo": null, "score": 0 },
+    { "start": "2018-02-08T17:19:47.000Z", "end": "2018-02-08T17:19:47.000Z", "value": 8.8, "geo": null, "score": 0 },
+    {
+      "start": "2018-02-08T17:19:46.000Z",
+      "end": "2018-02-08T17:24:46.000Z",
+      "value": 8.4,
+      "geo": { "name": "601-637 E Homestead Rd, Cupertino, CA 95014, USA", "lat": 37.3379303, "lng": -122.0240278 },
+      "score": 5
+    }
+  ],
+  "tracker": {
+    "tag": "mood",
+    "type": "range",
+    "color": "#369DD3",
+    "math": "sum",
+    "ignore_zeros": false,
+    "uom": "num",
+    "always_encrypt": false,
+    "dirty": false,
+    "emoji": "😐",
+    "default": null,
+    "max": "10",
+    "min": "1",
+    "cards": ["https://docs.nomie.io/time-of-day.html"]
+  },
+  "colors": {
+    "primary": "#27445E",
+    "primaryMuted": "#4D84A1",
+    "primaryDark": "#0E161E",
+    "primaryBright": "#319ED7",
+    "dark": "#142432",
+    "inverse": "#FFF",
+    "grey": "#666",
+    "faded": "#F8F8F8",
+    "faded2": "#CCC",
+    "textFaded": "#CCC",
+    "textFaded2": "#DDD",
+    "green": "#00C853",
+    "red": "red"
+  },
+  "timeframe": { "start": "2018-01-09T23:18:50.002Z", "end": "2018-02-09T04:59:59.999Z" }
+}
