@@ -7,8 +7,8 @@
   },
   "io.nomie.3.time-of-day": {
     "name": "Time of Day",
-    "description": "See usage by day",
-    "url": "https://docs.nomie.io/time-of-day.html",
+    "description": "See usage by hour",
+    "url": "https://happydata.github.io/nomie3-stat-cards/cards/time-of-day.html",
     "avatar": "https://pbs.twimg.com/profile_images/754338173967228929/9gZktlkA_400x400.jpg"
   }
 }
