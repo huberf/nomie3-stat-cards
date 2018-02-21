@@ -5,9 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <!-- I'm using my own little CSS toolkit for the UI, but you can use any
+       library you like - bootstrap, material, whatever...
+       learn more about oh-flex at https://brandoncorbin.github.io/oh-flex/docs/
+  -->
   <link rel="stylesheet" href="https://unpkg.com/oh-flex@2.2.0/lib/oh-flex.css">
+
+
   <script type="text/javascript">
-// This document is a single page by design
+  // This document is a single page by design
 // A way for looking for a somewhat accessible way of learning how this works
 // without a complicated build process.
 
@@ -148,7 +155,7 @@ function onNomieData(jsonData) {
         return getValueByHour(window.nomie_events);
       },
       getModeButtonColor: function() {},
-      getDataSet: function() {
+      dataset: function() {
         if (this.mode == "value") {
           return this.valueByHour;
         } else {
@@ -201,24 +208,28 @@ body {
 			</div>
 		</div>
 	  <div f-content>
-	    <div f-row f-align-center v-for="(time, i) in getDataSet" style="padding:2px 4px">
+      <!-- Loop over the dataset (a computed variable based on the current display mode) -->
+	    <div f-row f-align-center v-for="(time, i) in dataset" style="padding:2px 4px">
+        <!-- Time Column -->
 				<div f-w-max-50px style="padding:0 2px; width:50px; line-height:14px;">
 					<div f-t-12px f-t-white-50 f-t-right f-m-r-2px>
 						{{time.hour}}
 					</div>
 				</div>
-				<div f-grow style="padding:0; line-height:14px">
-					<div f-p-2px f-h-2px f-m-t-2px v-bind:style="{width: time.count+'%', opacity:(time.count / 30), backgroundColor: tracker.color, borderRadius:'4px' }"></div>
+        <!-- Bar Line -->
+				<div f-grow style="padding:0 5px; line-height:14px">
+					<div f-p-2px f-m-r-2px f-m-t-2px v-bind:style="{width: time.count+'%', opacity:(time.count / 30), backgroundColor: tracker.color, borderRadius:'4px' }"></div>
 				</div>
-				<div f-t-white-20 f-t-12px  style="padding:0 4px; line-height:14px;">
-					{{time.count}}
+        <!-- Value Column -->
+				<div f-t-white-20 f-t-12px style="line-height:14px;">
+					<div f-m-l-4px f-p-r-4px>{{time.value}}</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
   <!-- Uncomment the line below to test what sending data to nomie would be like. -->
-  <!-- <script src="../mock/on-nomie-data.js"></script> -->
+  <script src="../mock/on-nomie-data.js"></script>
 
 </body>
 
