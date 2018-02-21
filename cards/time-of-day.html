@@ -128,7 +128,7 @@ function onNomieData(jsonData) {
         return {
           hour: index === 0 ? "12am" : hour.hour <= 12 ? hour.hour + "am" : hour.hour - 12 + "pm",
           count: Math.round(hour.value / max * 100),
-          value: hour.value
+          value: Math.round(hour.value * 100) / 100
         };
       });
   };
