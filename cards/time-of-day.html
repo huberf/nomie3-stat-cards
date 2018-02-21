@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Nomie 3 Time of Day Stat Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/oh-flex@2.2.0/lib/oh-flex.css">
+  <script type="text/javascript">
+// This document is a single page by design
+// A way for looking for a somewhat accessible way of learning how this works
+// without a complicated build process.
+
+// The core function that Nomie3 will call,
+// with a payload (see sample-payload.json for example data)
+function onNomieData(jsonData) {
+  // Parse the data
+  let data = JSON.parse(jsonData);
+  // Set globally accessible variables
+  window.tracker = data.tracker;
+  window.nomie_events = data.events;
+  window.colors = data.colors;
+
+  // Function to calculate Counts by Hour
+  var getCountByHour = function(events) {
+    // Max
+    var max = 0;
+    // Hour map
+    var hour = {};
+    // Loop over events
+    for (var i = 0; i < events.length; i++) {
+      let event = events[i];
+      // In case we get a funky event
+      if (event.end) {
+        event.end = new Date(event.end);
+        // Fill the map with the hour. and count
+        hour["t-" + event.end.getHours()] = hour["t-" + event.end.getHours()] || 0;
+        hour["t-" + event.end.getHours()]++;
+      }
+    }
+    // Build Times Array
+    var hours = [];
+    // Loop over hours in the day
+    for (var i = 0; i < 24; i++) {
+      // DOes it exsit in the map?
+      if (hour.hasOwnProperty("t-" + i)) {
+        hours.push({ hour: i, count: hour["t-" + i] });
+      } else {
+        // If not, push a 0
+        hours.push({ hour: i, count: 0 });
+      }
+    }
+    // Find the max
+    hours.forEach(hour => {
+      if (hour.count > max) {
+        max = hour.count;
+      }
+    });
+    // Loop over hours, sort by hour
+    return (
+      hours
+        .sort((a, b) => {
+          if (a.hour > b.hour) {
+            return 1;
+          } else {
+            return -1;
+          }
+        })
+        // Create array with hour, count and value (non average count )
+        .map((hour, index) => {
+          return {
+            hour: index === 0 ? "12am" : hour.hour <= 12 ? hour.hour + "am" : hour.hour - 12 + "pm",
+            count: Math.round(hour.count / max * 100),
+            value: hour.count
+          };
+        })
+    );
+  };
+
+  // Get values by Hour
+  var getValueByHour = function(events) {
+    var max = 0;
+    var hour = {};
+    // Loop over events
+    for (var i = 0; i < events.length; i++) {
+      let event = events[i];
+      if (event.end) {
+        event.end = new Date(event.end);
+      }
+      // Set hour map to have the value.
+      hour["t-" + event.end.getHours()] = hour["t-" + event.end.getHours()] || 0;
+      hour["t-" + event.end.getHours()] = hour["t-" + event.end.getHours()] + event.value;
+    }
+    // Loop over each hour
+    var hours = [];
+    for (var i = 0; i < 24; i++) {
+      // if Hour has a value get it .
+      if (hour.hasOwnProperty("t-" + i)) {
+        hours.push({ hour: i, value: hour["t-" + i] });
+      } else {
+        // ntothing found for hour, default to 0
+        hours.push({ hour: i, value: 0 });
+      }
+    }
+    // Loop over array to find max value
+    hours.forEach(hour => {
+      if (hour.value > max) {
+        max = hour.value;
+      }
+    });
+    // Return a a sorted array
+    return hours
+      .sort((a, b) => {
+        if (a.hour > b.hour) {
+          return 1;
+        } else {
+          return -1;
+        }
+      })
+      .map((hour, index) => {
+        return {
+          hour: index === 0 ? "12am" : hour.hour <= 12 ? hour.hour + "am" : hour.hour - 12 + "pm",
+          count: Math.round(hour.value / max * 100),
+          value: hour.value
+        };
+      });
+  };
+
+  //
+  // Generate a Vue App! Love me some Vue.
+  //
+  var app = new Vue({
+    el: "#app",
+    methods: {
+      toggleMode: function() {
+        if (this.mode == "value") {
+          this.mode = "count";
+        } else {
+          this.mode = "value";
+        }
+      }
+    },
+    computed: {
+      countByHour: function() {
+        return getCountByHour(window.nomie_events);
+      },
+      valueByHour: function() {
+        return getValueByHour(window.nomie_events);
+      },
+      getModeButtonColor: function() {},
+      getDataSet: function() {
+        if (this.mode == "value") {
+          return this.valueByHour;
+        } else {
+          return this.countByHour;
+        }
+      }
+    },
+    data: {
+      tracker: window.tracker || testTracker,
+      nomie_events: window.nomie_events || testEvents,
+      colors: window.colors || {},
+      mode: "value" // or "count"
+    },
+    created: function() {
+      // Show the Body when its done loading
+      document.body.style.opacity = 1;
+    }
+  });
+}
+</script>
+
+<!--
+Some styles don't load immediately, so defaulting to black
+background is a good idea. Stats will always be viewed in a dark theme.
+-->
+<style>
+body {
+ height: 100%;
+ margin: 0;
+ overflow: hidden;
+ background-color:#000;
+}
+.inactiveButton {
+  opacity: 0.3
+}
+[f-button]:focus:before, [f-button]:hover:before {
+  background-color:transparent !important
+}
+
+</style>
+</head>
+
+<body style="opacity:0" v-bind:style={backgroundColor:colors.primaryDark} f-bg-black>
+	<div f-layout id="app" f-app v-bind:style={backgroundColor:colors.primaryDark}>
+		<div f-header f-bg-black v-bind:style={backgroundColor:colors.primaryDark}>
+			<div f-toolbar f-bg-black v-bind:style={backgroundColor:colors.primaryDark}>
+				<div f-title v-bind:style={color:tracker.color}>{{ tracker.emoji }} <span f-t-thin>time of day</span></div>
+        <button f-button v-bind:style={color:tracker.color} clear f-primary  v-bind:class='{ inactiveButton : mode=="value"}' v-on:click="toggleMode()">Count</button>
+        <button f-button v-bind:style={color:tracker.color} clear f-primary v-bind:class='{ inactiveButton : mode=="count"}' v-on:click="toggleMode()">Value</button>
+			</div>
+		</div>
+	  <div f-content>
+	    <div f-row f-align-center v-for="(time, i) in getDataSet" style="padding:2px 4px">
+				<div f-w-max-50px style="padding:0 2px; width:50px; line-height:14px;">
+					<div f-t-12px f-t-white-50 f-t-right f-m-r-2px>
+						{{time.hour}}
+					</div>
+				</div>
+				<div f-grow style="padding:0; line-height:14px">
+					<div f-p-2px f-h-2px f-m-t-2px v-bind:style="{width: time.count+'%', opacity:(time.count / 30), backgroundColor: tracker.color, borderRadius:'4px' }"></div>
+				</div>
+				<div f-t-white-20 f-t-12px  style="padding:0 4px; line-height:14px;">
+					{{time.count}}
+				</div>
+			</div>
+		</div>
+	</div>
+
+  <!-- Uncomment the line below to test what sending data to nomie would be like. -->
+  <!-- <script src="../mock/on-nomie-data.js"></script> -->
+
+</body>
+
+</html>
